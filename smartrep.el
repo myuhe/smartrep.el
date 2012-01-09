@@ -1,4 +1,4 @@
-;;; smartrep.el --- Support sequential operation which omitted prefix keys.
+;;; smartrep.el --- Support sequential operation which omitted prefix key.
 
 ;; Filename: smartrep.el
 ;; Description: Support sequential operation which omitted prefix keys.
@@ -6,7 +6,7 @@
 ;; Maintainer: myuhe
 ;; Copyright (C) :2011, myuhe all rights reserved.
 ;; Created: :2011-12-19
-;; Version: 0.0.1
+;; Version: 0.0.2
 ;; Keywords: convenience
 ;; URL: https://github.com/myuhe/smartrep.el
 
@@ -34,7 +34,8 @@
 
 ;;; Changelog:
 ;;
-;;
+;; 2012-01-06 read-key is replaced read-event for compatibility. thanks @tomy_kaira !!
+;;            
 
 ;;; Code:
 (eval-when-compile
@@ -68,7 +69,7 @@
           (lexical-let ((undo-inhibit-record-point t))
             (unwind-protect
                 (while 
-                    (lexical-let ((evt (read-key)))
+                    (lexical-let ((evt (read-event)))
                       ;; (eq (or (car-safe evt) evt)
                       ;;     (or (car-safe repeat-repeat-char)
                       ;;         repeat-repeat-char))
