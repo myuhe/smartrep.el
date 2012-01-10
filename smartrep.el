@@ -84,8 +84,19 @@
   (car (smartrep-filter char alist)))
 
 (defun smartrep-extract-fun (char alist)
-  (funcall
-   (eval (cdr (smartrep-filter char alist)))))
+  (let* ((rawform (cdr (smartrep-filter char alist)))
+	 (form (smartrep-unquote rawform)))
+    (cond
+     ((commandp form) (call-interactively form))
+     ((functionp form) (funcall form))
+     ((and (listp form) (symbolp (car form))) (eval form))
+     (t (error "Unsupported form %c %s" char rawform)))))
+
+
+(defun smartrep-unquote (form)
+  (if (and (listp form) (memq (car form) '(quote function)))
+      (eval form)
+    form))
 
 (defun smartrep-filter (char alist)
   (assoc 
@@ -97,6 +108,50 @@
                 (string-to-char (read-kbd-macro (car x))))
               (cdr x)))
            alist)))
+
+(dont-compile
+  (when (fboundp 'expectations)
+    (defun smartrep-test-func (&optional arg)
+      (or arg 1))
+    (defun smartrep-test-command ()
+      (interactive)
+      (if (interactive-p) 2 1))
+
+    (expectations
+      (desc "smartrep-unquote")
+      (expect 'hoge
+	(smartrep-unquote '(quote hoge)))
+      (expect 'hoge
+	(smartrep-unquote '(function hoge)))
+      (expect 'hoge
+	(smartrep-unquote 'hoge))
+      
+      (desc "smartrep-extract-fun")
+      (expect 1
+	(smartrep-extract-fun ?a '(("a" . smartrep-test-func))))
+      (expect 1
+	(smartrep-extract-fun ?a '(("a" . (lambda () (smartrep-test-func))))))
+      (expect 1
+	(smartrep-extract-fun ?a '(("a" . (smartrep-test-func)))))
+      (expect 2
+	(smartrep-extract-fun ?a '(("a" . (smartrep-test-func 2)))))
+      (expect 2
+	(smartrep-extract-fun ?a '(("a" . smartrep-test-command))))
+
+      (desc "smartrep-extract-fun with quote")
+      (expect 1
+	(smartrep-extract-fun ?a '(("a" . 'smartrep-test-func))))
+      (expect 1
+	(smartrep-extract-fun ?a '(("a" . '(lambda () (smartrep-test-func))))))
+      (expect 1
+	(smartrep-extract-fun ?a '(("a" . #'(lambda () (smartrep-test-func))))))
+      (expect 1
+	(smartrep-extract-fun ?a '(("a" . '(smartrep-test-func)))))
+      (expect 2
+	(smartrep-extract-fun ?a '(("a" . '(smartrep-test-func 2)))))
+      (expect 2
+	(smartrep-extract-fun ?a '(("a" . 'smartrep-test-command))))
+      )))
 
 (provide 'smartrep)
 
