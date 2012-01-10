@@ -89,6 +89,7 @@
     (cond
      ((commandp form) (call-interactively form))
      ((functionp form) (funcall form))
+     ((and (listp form) (symbolp (car form))) (eval form))
      (t (error "Unsupported form %c %s" char rawform)))))
 
 
@@ -130,9 +131,9 @@
 	(smartrep-extract-fun ?a '(("a" . smartrep-test-func))))
       (expect 1
 	(smartrep-extract-fun ?a '(("a" . (lambda () (smartrep-test-func))))))
-      (error
+      (expect 1
 	(smartrep-extract-fun ?a '(("a" . (smartrep-test-func)))))
-      (error
+      (expect 2
 	(smartrep-extract-fun ?a '(("a" . (smartrep-test-func 2)))))
       (expect 2
 	(smartrep-extract-fun ?a '(("a" . smartrep-test-command))))
@@ -144,9 +145,9 @@
 	(smartrep-extract-fun ?a '(("a" . '(lambda () (smartrep-test-func))))))
       (expect 1
 	(smartrep-extract-fun ?a '(("a" . #'(lambda () (smartrep-test-func))))))
-      (error
+      (expect 1
 	(smartrep-extract-fun ?a '(("a" . '(smartrep-test-func)))))
-      (error
+      (expect 2
 	(smartrep-extract-fun ?a '(("a" . '(smartrep-test-func 2)))))
       (expect 2
 	(smartrep-extract-fun ?a '(("a" . 'smartrep-test-command))))
