@@ -87,6 +87,7 @@
   (let* ((rawform (cdr (smartrep-filter char alist)))
 	 (form (smartrep-unquote rawform)))
     (cond
+     ((commandp form) (call-interactively form))
      ((functionp form) (funcall form))
      (t (error "Unsupported form %c %s" char rawform)))))
 
@@ -133,7 +134,7 @@
 	(smartrep-extract-fun ?a '(("a" . (smartrep-test-func)))))
       (error
 	(smartrep-extract-fun ?a '(("a" . (smartrep-test-func 2)))))
-      (expect 1
+      (expect 2
 	(smartrep-extract-fun ?a '(("a" . smartrep-test-command))))
 
       (desc "smartrep-extract-fun with quote")
@@ -147,7 +148,7 @@
 	(smartrep-extract-fun ?a '(("a" . '(smartrep-test-func)))))
       (error
 	(smartrep-extract-fun ?a '(("a" . '(smartrep-test-func 2)))))
-      (expect 1
+      (expect 2
 	(smartrep-extract-fun ?a '(("a" . 'smartrep-test-command))))
       )))
 
