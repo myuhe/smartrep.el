@@ -1,10 +1,10 @@
-;;; smartrep.el --- Support sequential operation which omitted prefix key.
+;;; smartrep.el --- Support sequential operation which omitted prefix keys.
 
 ;; Filename: smartrep.el
 ;; Description: Support sequential operation which omitted prefix keys.
 ;; Author: myuhe <yuhei.maeda_at_gmail.com>
 ;; Maintainer: myuhe
-;; Copyright (C) :2011, myuhe all rights reserved.
+;; Copyright (C) :2011,2012 myuhe all rights reserved.
 ;; Created: :2011-12-19
 ;; Version: 0.0.2
 ;; Keywords: convenience
@@ -38,7 +38,9 @@
 ;; 2012-01-11 Support function calling form. (buzztaiki)
 ;;            Call interactively when command. (buzztaiki) 
 ;;            Support unquoted function. (buzztaiki)
-
+;; 2012-01-11 new command `smartrep-restore-original-position' `smartrep-quit' (rubikitch)
+;;            add mode line notification (rubikitch)
+;;            
 
 ;;; Code:
 (eval-when-compile
@@ -46,55 +48,95 @@
 
 (defvar smartrep-key-string nil)
 
+(defvar smartrep-mode-line-string nil
+  "Mode line indicator for smartrep.")
+
+(defvar smartrep-mode-line-string-activated "========== SMARTREP ==========")
+
+(defvar smartrep-global-alist-hash (make-hash-table :test 'equal))
+
 (defun smartrep-define-key (keymap prefix alist)
-  (mapcar (lambda(x)
-            (define-key keymap
-              (read-kbd-macro 
-               (concat prefix " " (car x))) (smartrep-map alist)))
-          alist))
+  (when (eq keymap global-map)
+    (puthash prefix alist smartrep-global-alist-hash))
+  (setq alist
+        (if (eq keymap global-map)
+            alist
+          (append alist (gethash prefix smartrep-global-alist-hash))))
+  (mapc (lambda(x)
+          (define-key keymap
+            (read-kbd-macro 
+             (concat prefix " " (car x))) (smartrep-map alist)))
+        alist))
+(put 'smartrep-define-key 'lisp-indent-function 2)
 
 (defun smartrep-map (alist)
   (lexical-let ((lst alist))
-    (lambda ()
-      (interactive)
-      (let ((repeat-repeat-char last-command-event))
-        (if (memq last-repeatable-command
-                  '(exit-minibuffer
-                    minibuffer-complete-and-exit
-                    self-insert-and-exit))
-            (let ((repeat-command (car command-history)))
-              (eval repeat-command))
-          (progn
-            (run-hooks 'pre-command-hook)
-            (smartrep-extract-fun repeat-repeat-char lst)
-            (run-hooks 'post-command-hook)))
+    (lambda () (interactive) (smartrep-map-internal lst))))
+
+(defun smartrep-restore-original-position ()
+  (interactive)
+  (destructuring-bind (pt . wstart) smartrep-original-position
+    (goto-char pt)
+    (set-window-start (selected-window) wstart)))
+
+(defun smartrep-quit ()
+  (interactive)
+  (setq smartrep-mode-line-string "")
+  (smartrep-restore-original-position)
+  (keyboard-quit))
+
+(defun smartrep-map-internal (lst)
+  (interactive)
+  (setq smartrep-mode-line-string smartrep-mode-line-string-activated)
+  (force-mode-line-update)
+  (setq smartrep-original-position (cons (point) (window-start)))
+  (let ((repeat-repeat-char last-command-event))
+    (if (memq last-repeatable-command
+              '(exit-minibuffer
+                minibuffer-complete-and-exit
+                self-insert-and-exit))
+        (let ((repeat-command (car command-history)))
+          (eval repeat-command))
+      (smartrep-do-fun repeat-repeat-char lst))
+    (unwind-protect
         (when repeat-repeat-char
-          (lexical-let ((undo-inhibit-record-point t))
-            (unwind-protect
-                (while 
-                    (lexical-let ((evt (read-event)))
-                      ;; (eq (or (car-safe evt) evt)
-                      ;;     (or (car-safe repeat-repeat-char)
-                      ;;         repeat-repeat-char))
-                      (setq smartrep-key-string evt)
-                      (smartrep-extract-char evt lst))
-                  (condition-case nil
-                      (smartrep-extract-fun smartrep-key-string lst)
-                    (error nil))))
-            (setq unread-command-events (list last-input-event))))))))
+          (smartrep-read-event-loop lst))
+      (setq smartrep-mode-line-string "")
+      (force-mode-line-update))))
+
+(defun smartrep-read-event-loop (lst)
+  (lexical-let ((undo-inhibit-record-point t))
+    (unwind-protect
+        (while
+            (lexical-let ((evt (read-key)))
+              ;; (eq (or (car-safe evt) evt)
+              ;;     (or (car-safe repeat-repeat-char)
+              ;;         repeat-repeat-char))
+              (setq smartrep-key-string evt)
+              (smartrep-extract-char evt lst))
+          (ignore-errors (smartrep-do-fun smartrep-key-string lst))))
+    (setq unread-command-events (list last-input-event))))
 
 (defun smartrep-extract-char (char alist)
   (car (smartrep-filter char alist)))
 
 (defun smartrep-extract-fun (char alist)
   (let* ((rawform (cdr (smartrep-filter char alist)))
-	 (form (smartrep-unquote rawform)))
+         (form (smartrep-unquote rawform)))
     (cond
-     ((commandp form) (call-interactively form))
+     ((commandp form) 
+      (setq this-command form)
+      (unwind-protect
+          (call-interactively form)
+        (setq last-command form)))
      ((functionp form) (funcall form))
      ((and (listp form) (symbolp (car form))) (eval form))
      (t (error "Unsupported form %c %s" char rawform)))))
 
+(defun smartrep-do-fun (char alist)
+  (run-hooks 'pre-command-hook)
+  (smartrep-extract-fun char alist)
+  (run-hooks 'post-command-hook))
 
 (defun smartrep-unquote (form)
   (if (and (listp form) (memq (car form) '(quote function)))
@@ -102,15 +144,13 @@
     form))
 
 (defun smartrep-filter (char alist)
-  (assoc 
-   char
-   (mapcar (lambda (x)
-             (cons 
-              (if (vectorp (read-kbd-macro (car x)))
-                  (aref (read-kbd-macro (car x)) 0)
-                (string-to-char (read-kbd-macro (car x))))
-              (cdr x)))
-           alist)))
+  (loop for (key . form) in alist
+        for rkm = (read-kbd-macro key)
+        for number = (if (vectorp rkm)
+                         (aref rkm 0)
+                       (string-to-char rkm))
+        if (eq char number)
+        return (cons number form)))
 
 (dont-compile
   (when (fboundp 'expectations)
