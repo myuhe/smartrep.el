@@ -33,9 +33,12 @@
 ;;   And add to .emacs: (require 'smartrep)
 
 ;;; Changelog:
-;;
+
 ;; 2012-01-06 read-key is replaced read-event for compatibility. thanks @tomy_kaira !!
-;;            
+;; 2012-01-11 Support function calling form. (buzztaiki)
+;;            Call interactively when command. (buzztaiki) 
+;;            Support unquoted function. (buzztaiki)
+
 
 ;;; Code:
 (eval-when-compile
