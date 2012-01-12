@@ -40,6 +40,7 @@
 ;;            Support unquoted function. (buzztaiki)
 ;; 2012-01-11 new command `smartrep-restore-original-position' `smartrep-quit' (rubikitch)
 ;;            add mode line notification (rubikitch)
+;; 2012-01-12 add mode-line-color notification
 ;;            
 
 ;;; Code:
@@ -54,6 +55,16 @@
 (defvar smartrep-mode-line-string-activated "========== SMARTREP ==========")
 
 (defvar smartrep-global-alist-hash (make-hash-table :test 'equal))
+
+(defvar smartrep-mode-line-original-bg (face-background 'mode-line))
+
+(defvar smartrep-mode-line-active-bg (face-background 'highlight))
+
+(let ((cell (or (memq 'mode-line-position mode-line-format) 
+		(memq 'mode-line-buffer-identification mode-line-format))) 
+      (newcdr 'smartrep-mode-line-string))
+  (unless (member newcdr mode-line-format) 
+    (setcdr cell (cons newcdr (cdr cell)))))
 
 (defun smartrep-define-key (keymap prefix alist)
   (when (eq keymap global-map)
@@ -89,6 +100,7 @@
   (interactive)
   (setq smartrep-mode-line-string smartrep-mode-line-string-activated)
   (force-mode-line-update)
+  (set-face-background 'mode-line smartrep-mode-line-active-bg)
   (setq smartrep-original-position (cons (point) (window-start)))
   (let ((repeat-repeat-char last-command-event))
     (if (memq last-repeatable-command
@@ -102,7 +114,8 @@
         (when repeat-repeat-char
           (smartrep-read-event-loop lst))
       (setq smartrep-mode-line-string "")
-      (force-mode-line-update))))
+      (force-mode-line-update)
+      (set-face-background 'mode-line smartrep-mode-line-original-bg))))
 
 (defun smartrep-read-event-loop (lst)
   (lexical-let ((undo-inhibit-record-point t))
