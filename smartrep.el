@@ -102,20 +102,20 @@
   (force-mode-line-update)
   (set-face-background 'mode-line smartrep-mode-line-active-bg)
   (setq smartrep-original-position (cons (point) (window-start)))
-  (let ((repeat-repeat-char last-command-event))
-    (if (memq last-repeatable-command
-              '(exit-minibuffer
-                minibuffer-complete-and-exit
-                self-insert-and-exit))
-        (let ((repeat-command (car command-history)))
-          (eval repeat-command))
-      (smartrep-do-fun repeat-repeat-char lst))
     (unwind-protect
-        (when repeat-repeat-char
-          (smartrep-read-event-loop lst))
+        (let ((repeat-repeat-char last-command-event))
+          (if (memq last-repeatable-command
+                    '(exit-minibuffer
+                      minibuffer-complete-and-exit
+                      self-insert-and-exit))
+              (let ((repeat-command (car command-history)))
+                (eval repeat-command))
+            (smartrep-do-fun repeat-repeat-char lst))
+          (when repeat-repeat-char
+            (smartrep-read-event-loop lst)))
       (setq smartrep-mode-line-string "")
       (force-mode-line-update)
-      (set-face-background 'mode-line smartrep-mode-line-original-bg))))
+      (set-face-background 'mode-line smartrep-mode-line-original-bg)))
 
 (defun smartrep-read-event-loop (lst)
   (lexical-let ((undo-inhibit-record-point t))
@@ -127,7 +127,7 @@
               ;;         repeat-repeat-char))
               (setq smartrep-key-string evt)
               (smartrep-extract-char evt lst))
-          (ignore-errors (smartrep-do-fun smartrep-key-string lst))))
+          (smartrep-do-fun smartrep-key-string lst)))
     (setq unread-command-events (list last-input-event))))
 
 (defun smartrep-extract-char (char alist)
@@ -147,9 +147,15 @@
      (t (error "Unsupported form %c %s" char rawform)))))
 
 (defun smartrep-do-fun (char alist)
-  (run-hooks 'pre-command-hook)
-  (smartrep-extract-fun char alist)
-  (run-hooks 'post-command-hook))
+  (condition-case err
+      (progn
+        (run-hooks 'pre-command-hook)
+        (smartrep-extract-fun char alist)
+        (run-hooks 'post-command-hook))
+    (error
+     (ding)
+     (message "%s" (cdr err)))))
+    
 
 (defun smartrep-unquote (form)
   (if (and (listp form) (memq (car form) '(quote function)))
