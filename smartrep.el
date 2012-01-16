@@ -73,11 +73,16 @@
         (if (eq keymap global-map)
             alist
           (append alist (gethash prefix smartrep-global-alist-hash))))
-  (mapc (lambda(x)
-          (define-key keymap
-            (read-kbd-macro 
-             (concat prefix " " (car x))) (smartrep-map alist)))
-        alist))
+  (let ((oa (make-vector 13 nil)))
+    (mapc (lambda(x)
+	    (let ((obj (intern (prin1-to-string
+				(smartrep-unquote (cdr x)))
+			       oa)))
+	      (fset obj (smartrep-map alist))
+	      (define-key keymap
+		(read-kbd-macro 
+		 (concat prefix " " (car x))) obj)))
+	  alist)))
 (put 'smartrep-define-key 'lisp-indent-function 2)
 
 (defun smartrep-map (alist)
