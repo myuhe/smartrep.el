@@ -56,10 +56,6 @@
 
 (defvar smartrep-global-alist-hash (make-hash-table :test 'equal))
 
-(defvar smartrep-mode-line-original-bg (face-background 'mode-line))
-
-(defvar smartrep-mode-line-active-bg (face-background 'highlight))
-
 (let ((cell (or (memq 'mode-line-position mode-line-format) 
 		(memq 'mode-line-buffer-identification mode-line-format))) 
       (newcdr 'smartrep-mode-line-string))
@@ -105,22 +101,24 @@
   (interactive)
   (setq smartrep-mode-line-string smartrep-mode-line-string-activated)
   (force-mode-line-update)
-  (set-face-background 'mode-line smartrep-mode-line-active-bg)
-  (setq smartrep-original-position (cons (point) (window-start)))
-    (unwind-protect
-        (let ((repeat-repeat-char last-command-event))
-          (if (memq last-repeatable-command
-                    '(exit-minibuffer
-                      minibuffer-complete-and-exit
-                      self-insert-and-exit))
-              (let ((repeat-command (car command-history)))
-                (eval repeat-command))
-            (smartrep-do-fun repeat-repeat-char lst))
-          (when repeat-repeat-char
-            (smartrep-read-event-loop lst)))
-      (setq smartrep-mode-line-string "")
-      (force-mode-line-update)
-      (set-face-background 'mode-line smartrep-mode-line-original-bg)))
+  (let ((ml-original-bg (face-background 'mode-line))
+        (ml-active-bg (face-background 'highlight)))
+      (set-face-background 'mode-line ml-active-bg)
+      (setq smartrep-original-position (cons (point) (window-start)))
+      (unwind-protect
+          (let ((repeat-repeat-char last-command-event))
+            (if (memq last-repeatable-command
+                      '(exit-minibuffer
+                        minibuffer-complete-and-exit
+                        self-insert-and-exit))
+                (let ((repeat-command (car command-history)))
+                  (eval repeat-command))
+              (smartrep-do-fun repeat-repeat-char lst))
+            (when repeat-repeat-char
+              (smartrep-read-event-loop lst)))
+        (setq smartrep-mode-line-string "")
+        (force-mode-line-update)
+        (set-face-background 'mode-line ml-original-bg))))
 
 (defun smartrep-read-event-loop (lst)
   (lexical-let ((undo-inhibit-record-point t))
