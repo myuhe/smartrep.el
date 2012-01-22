@@ -102,9 +102,9 @@
 (defun smartrep-map-internal (lst)
   (interactive)
   (setq smartrep-mode-line-string smartrep-mode-line-string-activated)
-  (force-mode-line-update)
   (let ((ml-original-bg (face-background 'mode-line)))
       (set-face-background 'mode-line smartrep-mode-line-active-bg)
+      (force-mode-line-update)
       (setq smartrep-original-position (cons (point) (window-start)))
       (unwind-protect
           (let ((repeat-repeat-char last-command-event))
@@ -118,8 +118,8 @@
             (when repeat-repeat-char
               (smartrep-read-event-loop lst)))
         (setq smartrep-mode-line-string "")
-        (force-mode-line-update)
-        (set-face-background 'mode-line ml-original-bg))))
+        (set-face-background 'mode-line ml-original-bg)
+        (force-mode-line-update))))
 
 (defun smartrep-read-event-loop (lst)
   (lexical-let ((undo-inhibit-record-point t))
