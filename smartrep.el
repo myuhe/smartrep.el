@@ -56,6 +56,8 @@
 
 (defvar smartrep-global-alist-hash (make-hash-table :test 'equal))
 
+(defvar smartrep-mode-line-active-bg (face-background 'highlight))
+
 (let ((cell (or (memq 'mode-line-position mode-line-format) 
 		(memq 'mode-line-buffer-identification mode-line-format))) 
       (newcdr 'smartrep-mode-line-string))
@@ -101,9 +103,8 @@
   (interactive)
   (setq smartrep-mode-line-string smartrep-mode-line-string-activated)
   (force-mode-line-update)
-  (let ((ml-original-bg (face-background 'mode-line))
-        (ml-active-bg (face-background 'highlight)))
-      (set-face-background 'mode-line ml-active-bg)
+  (let ((ml-original-bg (face-background 'mode-line)))
+      (set-face-background 'mode-line smartrep-mode-line-active-bg)
       (setq smartrep-original-position (cons (point) (window-start)))
       (unwind-protect
           (let ((repeat-repeat-char last-command-event))
