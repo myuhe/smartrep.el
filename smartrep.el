@@ -6,7 +6,7 @@
 ;; Maintainer: myuhe
 ;; Copyright (C) :2011,2012 myuhe all rights reserved.
 ;; Created: :2011-12-19
-;; Version: 0.0.2
+;; Version: 0.0.3
 ;; Keywords: convenience
 ;; URL: https://github.com/myuhe/smartrep.el
 
