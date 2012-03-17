@@ -125,7 +125,7 @@
   (lexical-let ((undo-inhibit-record-point t))
     (unwind-protect
         (while
-            (lexical-let ((evt (read-key)))
+            (lexical-let ((evt (read-event)))
               ;; (eq (or (car-safe evt) evt)
               ;;     (or (car-safe repeat-repeat-char)
               ;;         repeat-repeat-char))
