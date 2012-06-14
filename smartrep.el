@@ -49,6 +49,10 @@
 
 (defvar smartrep-key-string nil)
 
+(defvar smartrep-read-event
+  (if (fboundp 'read-event) 'read-event 'read-key)
+  "Function to be used for reading keyboard events.")
+
 (defvar smartrep-mode-line-string nil
   "Mode line indicator for smartrep.")
 
@@ -125,7 +129,7 @@
   (lexical-let ((undo-inhibit-record-point t))
     (unwind-protect
         (while
-            (lexical-let ((evt (read-key)))
+            (lexical-let ((evt (funcall smartrep-read-event)))
               ;; (eq (or (car-safe evt) evt)
               ;;     (or (car-safe repeat-repeat-char)
               ;;         repeat-repeat-char))
