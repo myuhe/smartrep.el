@@ -62,6 +62,9 @@
 
 (defvar smartrep-mode-line-active-bg (face-background 'highlight))
 
+(defvar smartrep-original-position nil
+  "A cons holding the point and window-start when smartrep is invoked.")
+
 (let ((cell (or (memq 'mode-line-position mode-line-format) 
 		(memq 'mode-line-buffer-identification mode-line-format))) 
       (newcdr 'smartrep-mode-line-string))
