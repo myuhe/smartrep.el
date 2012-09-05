@@ -27,13 +27,13 @@
 
 ;;; Commentary:
 
-;;
 ;; Installation:
 ;;   Put the smartrep.el to your load-path.
 ;;   And add to .emacs: (require 'smartrep)
 
 ;;; Changelog:
 
+;; 2012-01-06 Remove unnecessary cord.
 ;; 2012-01-06 read-key is replaced read-event for compatibility. thanks @tomy_kaira !!
 ;; 2012-01-11 Support function calling form. (buzztaiki)
 ;;            Call interactively when command. (buzztaiki) 
@@ -115,13 +115,7 @@
       (setq smartrep-original-position (cons (point) (window-start)))
       (unwind-protect
           (let ((repeat-repeat-char last-command-event))
-            (if (memq last-repeatable-command
-                      '(exit-minibuffer
-                        minibuffer-complete-and-exit
-                        self-insert-and-exit))
-                (let ((repeat-command (car command-history)))
-                  (eval repeat-command))
-              (smartrep-do-fun repeat-repeat-char lst))
+              (smartrep-do-fun repeat-repeat-char lst)
             (when repeat-repeat-char
               (smartrep-read-event-loop lst)))
         (setq smartrep-mode-line-string "")
