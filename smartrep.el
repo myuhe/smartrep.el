@@ -71,28 +71,30 @@
   (unless (member newcdr mode-line-format) 
     (setcdr cell (cons newcdr (cdr cell)))))
 
-(defun smartrep-define-key (keymap prefix alist)
+(defun smartrep-define-key (keymap prefix alist &optional stop-keys)
   (when (eq keymap global-map)
     (puthash prefix alist smartrep-global-alist-hash))
   (setq alist
         (if (eq keymap global-map)
             alist
           (append alist (gethash prefix smartrep-global-alist-hash))))
-  (let ((oa (make-vector 13 nil)))
+  (let ((oa (make-vector 13 nil))
+        (stop-events (mapcar #'smartrep-key-to-number stop-keys)))
     (mapc (lambda(x)
 	    (let ((obj (intern (prin1-to-string
 				(smartrep-unquote (cdr x)))
 			       oa)))
-	      (fset obj (smartrep-map alist))
+	      (fset obj (smartrep-map alist stop-events))
 	      (define-key keymap
 		(read-kbd-macro 
 		 (concat prefix " " (car x))) obj)))
 	  alist)))
 (put 'smartrep-define-key 'lisp-indent-function 2)
 
-(defun smartrep-map (alist)
-  (lexical-let ((lst alist))
-    (lambda () (interactive) (smartrep-map-internal lst))))
+(defun smartrep-map (alist stop-events)
+  (lexical-let ((lst alist)
+                (stop stop-events))
+    (lambda () (interactive) (smartrep-map-internal lst stop))))
 
 (defun smartrep-restore-original-position ()
   (interactive)
@@ -106,7 +108,7 @@
   (smartrep-restore-original-position)
   (keyboard-quit))
 
-(defun smartrep-map-internal (lst)
+(defun smartrep-map-internal (lst stop-events)
   (interactive)
   (setq smartrep-mode-line-string smartrep-mode-line-string-activated)
   (let ((ml-original-bg (face-background 'mode-line)))
@@ -117,23 +119,27 @@
           (let ((repeat-repeat-char last-command-event))
               (smartrep-do-fun repeat-repeat-char lst)
             (when repeat-repeat-char
-              (smartrep-read-event-loop lst)))
+              (smartrep-read-event-loop lst stop-events)))
         (setq smartrep-mode-line-string "")
         (set-face-background 'mode-line ml-original-bg)
         (force-mode-line-update))))
 
-(defun smartrep-read-event-loop (lst)
-  (lexical-let ((undo-inhibit-record-point t))
+(defun smartrep-read-event-loop (lst stop-events)
+  (lexical-let ((undo-inhibit-record-point t)
+                stop)
     (unwind-protect
         (while
-            (lexical-let ((evt (funcall smartrep-read-event)))
-              ;; (eq (or (car-safe evt) evt)
-              ;;     (or (car-safe repeat-repeat-char)
-              ;;         repeat-repeat-char))
-              (setq smartrep-key-string evt)
-              (smartrep-extract-char evt lst))
-          (smartrep-do-fun smartrep-key-string lst)))
-    (setq unread-command-events (list last-input-event))))
+            (and (not stop)
+                 (lexical-let ((evt (funcall smartrep-read-event)))
+                   ;; (eq (or (car-safe evt) evt)
+                   ;;     (or (car-safe repeat-repeat-char)
+                   ;;         repeat-repeat-char))
+                   (setq smartrep-key-string evt)
+                   (smartrep-extract-char evt lst)))
+          (smartrep-do-fun smartrep-key-string lst)
+          (setq stop (memq smartrep-key-string stop-events))))
+    (unless stop
+      (setq unread-command-events (list last-input-event)))))
 
 (defun smartrep-extract-char (char alist)
   (car (smartrep-filter char alist)))
@@ -161,18 +167,20 @@
      (ding)
      (message "%s" (cdr err)))))
     
-
 (defun smartrep-unquote (form)
   (if (and (listp form) (memq (car form) '(quote function)))
       (eval form)
     form))
 
+(defun smartrep-key-to-number (key)
+  (let ((rkm (read-kbd-macro key)))
+    (if (vectorp rkm)
+        (aref rkm 0)
+      (string-to-char rkm))))
+
 (defun smartrep-filter (char alist)
   (loop for (key . form) in alist
-        for rkm = (read-kbd-macro key)
-        for number = (if (vectorp rkm)
-                         (aref rkm 0)
-                       (string-to-char rkm))
+        for number = (smartrep-key-to-number key)
         if (eq char number)
         return (cons number form)))
 
