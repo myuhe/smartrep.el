@@ -84,10 +84,11 @@
 	    (let ((obj (intern (prin1-to-string
 				(smartrep-unquote (cdr x)))
 			       oa)))
-	      (fset obj (smartrep-map alist stop-events))
-	      (define-key keymap
-		(read-kbd-macro 
-		 (concat prefix " " (car x))) obj)))
+              (unless (member (car x) stop-keys)
+                (fset obj (smartrep-map alist stop-events))
+                (define-key keymap
+                  (read-kbd-macro 
+                   (concat prefix " " (car x))) obj))))
 	  alist)))
 (put 'smartrep-define-key 'lisp-indent-function 2)
 
