@@ -49,6 +49,8 @@
 
 (defvar smartrep-key-string nil)
 
+(defvar smartrep-stop nil)
+
 (defvar smartrep-read-event
   (if (fboundp 'read-event) 'read-event 'read-key)
   "Function to be used for reading keyboard events.")
@@ -115,7 +117,8 @@
       (setq smartrep-original-position (cons (point) (window-start)))
       (unwind-protect
           (let ((repeat-repeat-char last-command-event))
-              (smartrep-do-fun repeat-repeat-char lst)
+            (setq smartrep-stop nil)
+            (smartrep-do-fun repeat-repeat-char lst)
             (when repeat-repeat-char
               (smartrep-read-event-loop lst)))
         (setq smartrep-mode-line-string "")
@@ -125,15 +128,17 @@
 (defun smartrep-read-event-loop (lst)
   (lexical-let ((undo-inhibit-record-point t))
     (unwind-protect
-        (while
-            (lexical-let ((evt (funcall smartrep-read-event)))
-              ;; (eq (or (car-safe evt) evt)
-              ;;     (or (car-safe repeat-repeat-char)
-              ;;         repeat-repeat-char))
-              (setq smartrep-key-string evt)
-              (smartrep-extract-char evt lst))
+        (while (and
+                (not smartrep-stop)
+                (lexical-let ((evt (funcall smartrep-read-event)))
+                  ;; (eq (or (car-safe evt) evt)
+                  ;;     (or (car-safe repeat-repeat-char)
+                  ;;         repeat-repeat-char))
+                  (setq smartrep-key-string evt)
+                  (smartrep-extract-char evt lst)))
           (smartrep-do-fun smartrep-key-string lst)))
-    (setq unread-command-events (list last-input-event))))
+    (unless smartrep-stop
+      (setq unread-command-events (list last-input-event)))))
 
 (defun smartrep-extract-char (char alist)
   (car (smartrep-filter char alist)))
@@ -141,6 +146,9 @@
 (defun smartrep-extract-fun (char alist)
   (let* ((rawform (cdr (smartrep-filter char alist)))
          (form (smartrep-unquote rawform)))
+    (when (and (symbolp form)
+               (get form 'smartrep-stop))
+      (setq smartrep-stop t))
     (cond
      ((commandp form) 
       (setq this-command form)
@@ -160,7 +168,6 @@
     (error
      (ding)
      (message "%s" (cdr err)))))
-    
 
 (defun smartrep-unquote (form)
   (if (and (listp form) (memq (car form) '(quote function)))
