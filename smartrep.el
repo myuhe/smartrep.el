@@ -47,6 +47,20 @@
 (eval-when-compile
   (require 'cl))
 
+(defgroup smartrep nil
+  "Support sequential operation which omitted prefix keys"
+  :group 'keyboard)
+
+(defcustom smartrep-mode-line-string-activated "========== SMARTREP =========="
+  "Lighter when smartrep-mode is activated"
+  :type 'string
+  :group 'smartrep)
+
+(defcustom smartrep-mode-line-active-bg (face-background 'highlight)
+  "Background color when smartrep-mode is activated"
+  :type 'string
+  :group 'smartrep)
+
 (defvar smartrep-key-string nil)
 
 (defvar smartrep-read-event
@@ -56,11 +70,7 @@
 (defvar smartrep-mode-line-string nil
   "Mode line indicator for smartrep.")
 
-(defvar smartrep-mode-line-string-activated "========== SMARTREP ==========")
-
 (defvar smartrep-global-alist-hash (make-hash-table :test 'equal))
-
-(defvar smartrep-mode-line-active-bg (face-background 'highlight))
 
 (defvar smartrep-original-position nil
   "A cons holding the point and window-start when smartrep is invoked.")
