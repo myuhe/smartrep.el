@@ -188,50 +188,6 @@
         if (eq char number)
         return (cons number form)))
 
-(dont-compile
-  (when (fboundp 'expectations)
-    (defun smartrep-test-func (&optional arg)
-      (or arg 1))
-    (defun smartrep-test-command ()
-      (interactive)
-      (if (interactive-p) 2 1))
-
-    (expectations
-      (desc "smartrep-unquote")
-      (expect 'hoge
-	(smartrep-unquote '(quote hoge)))
-      (expect 'hoge
-	(smartrep-unquote '(function hoge)))
-      (expect 'hoge
-	(smartrep-unquote 'hoge))
-      
-      (desc "smartrep-extract-fun")
-      (expect 1
-	(smartrep-extract-fun ?a '(("a" . smartrep-test-func))))
-      (expect 1
-	(smartrep-extract-fun ?a '(("a" . (lambda () (smartrep-test-func))))))
-      (expect 1
-	(smartrep-extract-fun ?a '(("a" . (smartrep-test-func)))))
-      (expect 2
-	(smartrep-extract-fun ?a '(("a" . (smartrep-test-func 2)))))
-      (expect 2
-	(smartrep-extract-fun ?a '(("a" . smartrep-test-command))))
-
-      (desc "smartrep-extract-fun with quote")
-      (expect 1
-	(smartrep-extract-fun ?a '(("a" . 'smartrep-test-func))))
-      (expect 1
-	(smartrep-extract-fun ?a '(("a" . '(lambda () (smartrep-test-func))))))
-      (expect 1
-	(smartrep-extract-fun ?a '(("a" . #'(lambda () (smartrep-test-func))))))
-      (expect 1
-	(smartrep-extract-fun ?a '(("a" . '(smartrep-test-func)))))
-      (expect 2
-	(smartrep-extract-fun ?a '(("a" . '(smartrep-test-func 2)))))
-      (expect 2
-	(smartrep-extract-fun ?a '(("a" . 'smartrep-test-command))))
-      )))
-
 (provide 'smartrep)
 
 ;;; smartrep.el ends here
