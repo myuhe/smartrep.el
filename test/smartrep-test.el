@@ -1,4 +1,4 @@
-;;; test-smartrep.el --- Test smartrep.el
+;;; smartrep-test.el --- Test smartrep.el
 
 ;; Copyright (C) 2014 by myuhe all rights reserved.
 
@@ -52,4 +52,4 @@
   (unless noninteractive
     (should (= (smartrep-extract-fun ?a '(("a" . 'smartrep-test-command))) 2))))
 
-;;; test-smartrep.el end here
+;;; smartrep-test.el end here

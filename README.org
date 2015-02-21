@@ -114,7 +114,6 @@
 
 [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook]]
 
-
 [[https://github.com/aki2o/owdriver][aki2o/owdriver]]
 
 * Similar application
