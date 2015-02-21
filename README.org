@@ -5,7 +5,7 @@
 
   - [[https://github.com/myuhe/smartrep.el#example][Examples]]
   - [[https://github.com/myuhe/smartrep.el#smartrep-works-in-many-applications][smartrep works in many applications]]
-  - 
+  - [[https://github.com/myuhe/smartrep.el#similar-application][Similar application]]
 
 * Examples
 
@@ -105,7 +105,7 @@
 #+end_src
 
 
-* smartrep works in many applications
+* Smartrep works in many applications
    many applications uses  =smartrep= . Thanks!!
 
 [[https://github.com/rolandwalker/back-button][rolandwalker/back-button]]  \\
