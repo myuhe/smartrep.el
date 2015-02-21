@@ -1,7 +1,13 @@
 * Overview [[http://melpa.org/#/smartrep][file:http://melpa.org/packages/smartrep-badge.svg]]
   =smartrep= is sequential command interface library. it enables to omit typing prefix keys. (e.g., C-c C-n C-n C-n ... instead of C-c C-n C-c C-n C-c C-n ...)
 
-* Example
+* Contents
+
+  - [[https://github.com/myuhe/smartrep.el#example][Examples]]
+  - [[https://github.com/myuhe/smartrep.el#smartrep-works-in-many-applications][smartrep works in many applications]]
+  - 
+
+* Examples
 
 ** Controll two buffer
    scroll other buffer. when current buffer is not change.
@@ -99,15 +105,18 @@
 #+end_src
 
 
-
-** smartrep works in many applications
+* smartrep works in many applications
    many applications uses  =smartrep= . Thanks!!
 
 [[https://github.com/rolandwalker/back-button][rolandwalker/back-button]]  \\
 
+[[https://github.com/rolandwalker/fixmee][rolandwalker/fixmee]]
+
 [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook]]
 
-[[[https://github.com/rolandwalker/fixmee][rolandwalker/fixmee]]
 
 [[https://github.com/aki2o/owdriver][aki2o/owdriver]]
 
+* Similar application
+
+[[https://github.com/abo-abo/hydra][abo-abo/hydra]]
