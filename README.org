@@ -1,0 +1,113 @@
+* Overview [[http://melpa.org/#/smartrep][file:http://melpa.org/packages/smartrep-badge.svg]]
+  =smartrep= is sequential command interface library. it enables to omit typing prefix keys. (e.g., C-c C-n C-n C-n ... instead of C-c C-n C-c C-n C-c C-n ...)
+
+* Example
+
+** Controll two buffer
+   scroll other buffer. when current buffer is not change.
+   If you want to scroll two line on other buffer, you just type  =C-q n n=. 
+#+begin_src elisp
+(smartrep-define-key 
+    global-map "C-q" '(("n" . (scroll-other-window 1))
+                       ("p" . (scroll-other-window -1))
+                       ("N" . 'scroll-other-window)
+                       ("P" . (scroll-other-window '-))
+                       ("a" . (beginning-of-buffer-other-window 0))
+                       ("e" . (end-of-buffer-other-window 0))))
+#+end_src
+
+** Change window size
+   Changing Window size tends to execute same command continuously. It is boring work.
+   So eval this example and then type  =C-x { { {= . 
+
+#+begin_src elisp
+  (smartrep-define-key
+      global-map "C-x"
+    '(("{" . shrink-window-horizontally)
+      ("}" . enlarge-window-horizontally)))
+#+end_src
+
+
+** Move header on Org-mode
+   Org-mode has  complicated prefix key, It is so frustrating.
+
+   This idea simplify it. If you want to move from heading to heading, then type  =C-c= and some  =C-n= or =C-p=
+
+#+begin_src elisp
+  (smartrep-define-key 
+      org-mode-map "C-c" '(("C-n" . (outline-next-visible-heading 1))
+                           ("C-p" . (outline-previous-visible-heading 1))))
+#+end_src
+
+** Remote Controll Firefox
+   You may control Firefox via Emacs.
+
+   this example enables to manipulate Firefox, scroll up , down and more.
+
+   It requires [[https://github.com/bard/mozrepl/blob/master/chrome/content/moz.el][moz.el]]
+
+
+
+#+begin_src elisp
+(autoload 'moz-minor-mode "moz" "Mozilla Minor and Inferior Mozilla Modes" t)
+(moz-minor-mode t)
+
+(defun moz-send-message (moz-command)
+  (comint-send-string
+   (inferior-moz-process)
+   (concat moz-repl-name ".pushenv('printPrompt', 'inputMode'); "
+           moz-repl-name ".setenv('inputMode', 'line'); "
+           moz-repl-name ".setenv('printPrompt', false); undefined; "))
+  (comint-send-string
+   (inferior-moz-process)
+   (concat moz-command
+           moz-repl-name ".popenv('inputMode', 'printPrompt'); undefined;\n")))
+
+(defun moz-scrolldown-1 ()
+  (interactive)
+   (moz-send-message "goDoCommand('cmd_scrollLineDown');\n")) 
+
+(defun moz-scrolldown ()
+  (interactive)
+   (moz-send-message "goDoCommand('cmd_scrollPageDown');")) 
+
+(defun moz-scrollup-1 ()
+  (interactive)
+   (moz-send-message "goDoCommand('cmd_scrollLineUp');\n")) 
+
+(defun moz-scrollup ()
+  (interactive)
+   (moz-send-message "goDoCommand('cmd_scrollPageUp');")) 
+
+(defun moz-top ()
+  (interactive)
+   (moz-send-message "goDoCommand('cmd_scrollTop');\n"))
+
+(defun moz-bottom ()
+  (interactive)
+   (moz-send-message "goDoCommand('cmd_scrollBottom');\n"))
+
+(require 'smartrep)
+
+(smartrep-define-key 
+ global-map "M-g" '(("n" . moz-scrolldown-1)
+                    ("N" . moz-scrolldown)
+                    ("p" . moz-scrollup-1)
+                    ("P" . moz-scrollup)
+                    ("a" . moz-top)
+                    ("e" . moz-bottom)))
+#+end_src
+
+
+
+** smartrep works in many applications
+   many applications uses  =smartrep= . Thanks!!
+
+[[https://github.com/rolandwalker/back-button][rolandwalker/back-button]]  \\
+
+[[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook]]
+
+[[[https://github.com/rolandwalker/fixmee][rolandwalker/fixmee]]
+
+[[https://github.com/aki2o/owdriver][aki2o/owdriver]]
+
