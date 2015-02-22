@@ -6,9 +6,9 @@
 * Contents
 
   - [[https://github.com/myuhe/smartrep.el#example][Examples]]
-  - [[https://github.com/myuhe/smartrep.el#smartrep-works-in-many-applications][smartrep works in many applications]]
+  - [[https://github.com/myuhe/smartrep.el#smartrep-works-in-many-applications][Smartrep works in many applications]]
   - [[https://github.com/myuhe/smartrep.el#similar-application][Similar application]]
-
+  - [[https://github.com/myuhe/smartrep.el#usage][Usage]]
 
 * Usage 
    =smartrep= offers only one function  =smartrep-define-key= .
