@@ -16,6 +16,9 @@
 ;; GNU General Public License for more details.
 
 (require 'ert)
+(require 'undercover)
+(undercover "smartrep.el")
+
 (require 'smartrep)
 
 (defun smartrep-test-func (&optional arg)
