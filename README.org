@@ -1,4 +1,4 @@
-* Smartrep [[http://melpa.org/#/smartrep][file:http://melpa.org/packages/smartrep-badge.svg]] [[https://travis-ci.org/myuhe/smartrep.el][https://travis-ci.org/myuhe/smartrep.el.svg?branch=master]] [[https://coveralls.io/repos/myuhe/smartrep.el/badge.svg?branch=master][https://coveralls.io/r/myuhe/smartrep.el?branch=master]]
+* Smartrep [[http://melpa.org/#/smartrep][file:http://melpa.org/packages/smartrep-badge.svg]] [[https://travis-ci.org/myuhe/smartrep.el][https://travis-ci.org/myuhe/smartrep.el.svg?branch=master]] [[https://coveralls.io/r/myuhe/smartrep.el?branch=master][https://coveralls.io/repos/myuhe/smartrep.el/badge.svg?branch=master]]
   
 
   =smartrep= is sequential command interface library. it enables to omit typing prefix keys. (e.g., C-c C-n C-n C-n ... instead of C-c C-n C-c C-n C-c C-n ...)
