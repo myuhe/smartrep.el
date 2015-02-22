@@ -7,6 +7,22 @@
   - [[https://github.com/myuhe/smartrep.el#smartrep-works-in-many-applications][smartrep works in many applications]]
   - [[https://github.com/myuhe/smartrep.el#similar-application][Similar application]]
 
+
+* Usage 
+   =smartrep= offers only one function  =smartrep-define-key= .
+   you binds key with =smartrep-define-key= like 
+
+#+begin_src elisp
+     (smartrep-define-key
+         global-map "M-g"
+       '(("n" . next-line)
+         ("p" . previous-line)))
+#+end_src
+
+Then after you type  =M-g= , if =n= is typed  , exetute  =next-line= and  =p= execute  =previous-line= .
+
+If any other key is typed, special key binding is canceled, that is ,  if =n= is typed insert "n" as character.
+
 * Examples
 
 ** Controll two buffer
