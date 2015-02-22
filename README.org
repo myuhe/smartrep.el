@@ -5,10 +5,10 @@
 
 * Contents
 
+  - [[https://github.com/myuhe/smartrep.el#usage][Usage]]
   - [[https://github.com/myuhe/smartrep.el#example][Examples]]
   - [[https://github.com/myuhe/smartrep.el#smartrep-works-in-many-applications][Smartrep works in many applications]]
   - [[https://github.com/myuhe/smartrep.el#similar-application][Similar application]]
-  - [[https://github.com/myuhe/smartrep.el#usage][Usage]]
 
 * Usage 
    =smartrep= offers only one function  =smartrep-define-key= .
@@ -26,7 +26,6 @@ Then after you type  =M-g= , if =n= is typed  , exetute  =next-line= and  =p= ex
 If any other key is typed, special key binding is canceled, that is ,  if =n= is typed insert "n" as character.
 
 * Examples
-
 ** Controll two buffer
    scroll other buffer. when current buffer is not change.
    If you want to scroll two line on other buffer, you just type  =C-q n n=. 
@@ -126,7 +125,7 @@ If any other key is typed, special key binding is canceled, that is ,  if =n= is
 * Smartrep works in many applications
    many applications uses  =smartrep= . Thanks!!
 
-[[https://github.com/rolandwalker/back-button][rolandwalker/back-button]]  \\
+[[https://github.com/rolandwalker/back-button][rolandwalker/back-button]]
 
 [[https://github.com/rolandwalker/fixmee][rolandwalker/fixmee]]
 
