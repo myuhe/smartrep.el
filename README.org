@@ -1,7 +1,7 @@
 * Smartrep [[http://melpa.org/#/smartrep][file:http://melpa.org/packages/smartrep-badge.svg]] [[http://stable.melpa.org/#/smartrep][file:http://stable.melpa.org/packages/smartrep-badge.svg]] [[https://travis-ci.org/myuhe/smartrep.el][https://travis-ci.org/myuhe/smartrep.el.svg?branch=master]] [[https://coveralls.io/r/myuhe/smartrep.el?branch=master][https://coveralls.io/repos/myuhe/smartrep.el/badge.svg?branch=master]]
   
 
-  =smartrep= is sequential command interface library. it enables to omit typing prefix keys. (e.g., C-c C-n C-n C-n ... instead of C-c C-n C-c C-n C-c C-n ...)
+  =smartrep= is a sequential command interface library. It enables the omittance of typing prefix keys. (e.g., C-c C-n C-n C-n ... instead of C-c C-n C-c C-n C-c C-n ...)
 
 * Contents
 
@@ -11,8 +11,8 @@
   - [[https://github.com/myuhe/smartrep.el#similar-application][Similar application]]
 
 * Usage 
-   =smartrep= offers only one function  =smartrep-define-key= .
-   you binds key with =smartrep-define-key= like 
+   =smartrep= offers only one function =smartrep-define-key=.
+   The key is bound with =smartrep-define-key= like: 
 
 #+begin_src elisp
      (smartrep-define-key
@@ -21,14 +21,14 @@
          ("p" . previous-line)))
 #+end_src
 
-Then after you type  =M-g= , if =n= is typed  , exetute  =next-line= and  =p= execute  =previous-line= .
+Then after typing =M-g=, =n= exetutes =next-line= and =p= executes =previous-line=.
 
-If any other key is typed, special key binding is canceled, that is ,  if =n= is typed insert "n" as character.
+If any other key is typed, the special key binding is canceled. That is, if =n= is typed, "n" is inserted as a character.
 
 * Examples
-** Controll two buffer
-   scroll other buffer. when current buffer is not change.
-   If you want to scroll two line on other buffer, you just type  =C-q n n=. 
+** Control Two Buffers
+   Scroll another buffer. The current buffer is not changed.
+   If you want to scroll by two lines in the other buffer, just type  =C-q n n=.
 #+begin_src elisp
 (smartrep-define-key 
     global-map "C-q" '(("n" . (scroll-other-window 1))
@@ -39,9 +39,9 @@ If any other key is typed, special key binding is canceled, that is ,  if =n= is
                        ("e" . (end-of-buffer-other-window 0))))
 #+end_src
 
-** Change window size
-   Changing Window size tends to execute same command continuously. It is boring work.
-   So eval this example and then type  =C-x { { {= . 
+** Change Window Size
+   Changing Window size tends to execute the same command continuously. It is boring work.
+   So eval this example and type =C-x { { {=. 
 
 #+begin_src elisp
   (smartrep-define-key
@@ -52,9 +52,9 @@ If any other key is typed, special key binding is canceled, that is ,  if =n= is
 
 
 ** Move header on Org-mode
-   Org-mode has  complicated prefix key, It is so frustrating.
+   Org-mode has complicated prefix keys. It is so frustrating.
 
-   This idea simplify it. If you want to move from heading to heading, then type  =C-c= and some  =C-n= or =C-p=
+   This idea simplifies it. If you want to move from heading to heading, then type =C-c= and then =C-n= or =C-p=.
 
 #+begin_src elisp
   (smartrep-define-key 
@@ -62,10 +62,10 @@ If any other key is typed, special key binding is canceled, that is ,  if =n= is
                            ("C-p" . (outline-previous-visible-heading 1))))
 #+end_src
 
-** Remote Controll Firefox
+** Remotely Control Firefox
    You may control Firefox via Emacs.
 
-   this example enables to manipulate Firefox, scroll up , down and more.
+   This example enables the manipulation of Firefox to scroll up, down and more.
 
    It requires [[https://github.com/bard/mozrepl/blob/master/chrome/content/moz.el][moz.el]]
 
@@ -122,8 +122,8 @@ If any other key is typed, special key binding is canceled, that is ,  if =n= is
 #+end_src
 
 
-* Smartrep works in many applications
-   many applications uses  =smartrep= . Thanks!!
+* Smartrep Works In Many Applications
+   Many applications use =smartrep=. Thanks!!
 
 [[https://github.com/rolandwalker/back-button][rolandwalker/back-button]]
 
@@ -133,6 +133,6 @@ If any other key is typed, special key binding is canceled, that is ,  if =n= is
 
 [[https://github.com/aki2o/owdriver][aki2o/owdriver]]
 
-* Similar application
+* Similar Applications
 
 [[https://github.com/abo-abo/hydra][abo-abo/hydra]]
