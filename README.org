@@ -125,13 +125,17 @@ If any other key is typed, the special key binding is canceled. That is, if =n= 
 * Smartrep Works In Many Applications
    Many applications use =smartrep=. Thanks!!
 
-[[https://github.com/rolandwalker/back-button][rolandwalker/back-button]]
+ - [[https://github.com/rolandwalker/back-button][rolandwalker/back-button]]
+ - [[https://github.com/rolandwalker/fixmee][rolandwalker/fixmee]]
+ - [[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook]]
+ - [[https://github.com/aki2o/owdriver][aki2o/owdriver]]
 
-[[https://github.com/rolandwalker/fixmee][rolandwalker/fixmee]]
-
-[[https://github.com/millejoh/emacs-ipython-notebook][millejoh/emacs-ipython-notebook]]
-
-[[https://github.com/aki2o/owdriver][aki2o/owdriver]]
+* Related article
+ - [[http://oremacs.com/2015/01/14/repeatable-commands/][Zoom in / out with style · (or emacs]]
+ - [[http://sheephead.homelinux.org/2011/12/19/6930/][連続操作を素敵にするsmartrep.el作った - sheephead]] (In Japanese)
+ - [[http://sheephead.homelinux.org/2012/01/30/6934/][smartrep.el 0.0.3をリリースしました - sheephead]] (In Japanese)
+ - [[http://tam5917.hatenablog.com/entry/20121208/1354931551][multiple-cursors.elのキーバインドを少しだけ改善 - 備忘録]] (In Japanese)
+ - [[http://d.hatena.ne.jp/rubikitch/20140613/smartrep][Emacs - smartrep.elでrepeatを活性化せよ - http://rubikitch.com/に移転しました]] (In Japanese)
 
 * Similar Applications
 
