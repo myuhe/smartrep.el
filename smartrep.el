@@ -78,8 +78,9 @@
 (let ((cell (or (memq 'mode-line-position mode-line-format) 
 		(memq 'mode-line-buffer-identification mode-line-format))) 
       (newcdr 'smartrep-mode-line-string))
-  (unless (member newcdr mode-line-format) 
-    (setcdr cell (cons newcdr (cdr cell)))))
+  (when cell
+    (unless (member newcdr mode-line-format)
+      (setcdr cell (cons newcdr (cdr cell))))))
 
 (defun smartrep-define-key (keymap prefix alist)
   (when (eq keymap global-map)
