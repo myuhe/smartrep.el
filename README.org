@@ -6,7 +6,7 @@
 * Contents
 
   - [[https://github.com/myuhe/smartrep.el#usage][Usage]]
-  - [[https://github.com/myuhe/smartrep.el#example][Examples]]
+  - [[https://github.com/myuhe/smartrep.el#examples][Examples]]
   - [[https://github.com/myuhe/smartrep.el#smartrep-works-in-many-applications][Smartrep works in many applications]]
   - [[https://github.com/myuhe/smartrep.el#similar-application][Similar application]]
 
