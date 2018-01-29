@@ -63,9 +63,20 @@
 
 (defvar smartrep-key-string nil)
 
+(defcustom smartrep-read-event-timeout nil
+  "If non-nil, timeout in seconds before smartrep-mode automatically exits"
+  :type 'number
+  :group 'smartrep)
+
 (defvar smartrep-read-event
   (if (fboundp 'read-event) 'read-event 'read-key)
   "Function to be used for reading keyboard events.")
+
+(defun smartrep-read-event ()
+  (if smartrep-read-event-timeout
+      (with-timeout (smartrep-read-event-timeout (error "smartrep-mode timed out"))
+        (funcall smartrep-read-event))
+    (funcall smartrep-read-event)))
 
 (defvar smartrep-mode-line-string nil
   "Mode line indicator for smartrep.")
@@ -139,7 +150,7 @@
   (lexical-let ((undo-inhibit-record-point t))
     (unwind-protect
         (while
-            (lexical-let ((evt (funcall smartrep-read-event)))
+            (lexical-let ((evt (smartrep-read-event)))
               ;; (eq (or (car-safe evt) evt)
               ;;     (or (car-safe repeat-repeat-char)
               ;;         repeat-repeat-char))
