@@ -89,7 +89,7 @@
         (if (eq keymap global-map)
             alist
           (append alist (gethash prefix smartrep-global-alist-hash))))
-  (let ((oa (make-vector 13 nil)))
+  (let ((oa (make-vector 13 0)))
     (mapc (lambda(x)
 	    (let ((obj (intern (prin1-to-string
 				(smartrep-unquote (cdr x)))
